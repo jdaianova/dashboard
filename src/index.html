@@ -1,12 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Dashboard</title>   
 </head>
+
 <body>
-    <h1>START</h1>
+
+    <h1>DASHBOARD</h1>
+    <div class="boards">
+        <div class="board">
+            <p class="board-title">to do</p>
+
+            <div class="tasks">
+                <div class="task" draggable="true">task N 1</div>
+                <div class="task" draggable="true">task N 2</div>
+            </div>
+
+            <div class="add-new-task invisible">
+                <textarea class="new-task-text" placeholder="Enter text of new task..."></textarea>
+                <div class="new-task-buttons">
+                    <button class="btn add-task-btn">Add task</button>
+                    <button class="btn cancel-task-btn">Cancel</button>
+                </div>
+            </div>
+
+            <button class="btn add-btn">+ Add new task</button>
+        </div>
+
+        <div class="board">
+            <p class="board-title">in progress</p>
+            <div class="tasks"></div>
+        </div>
+
+        <div class="board">
+            <p class="board-title">done</p>
+            <div class="tasks"></div>
+        </div>
+      
 </body>
+
 </html>
