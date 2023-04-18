@@ -5,14 +5,17 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Dashboard</title>   
 </head>
 
 <body>
+
+    <h1>DASHBOARD</h1>
     <div class="boards">
         <div class="board">
-            <h3 class="board-title">to do</h3>
-            <div class="task-list"></div>
+            <p class="board-title">to do</p>
+
+            <div class="listOfTasks"></div>
 
             <div class="add-new-task invisible">
                 <textarea class="new-task-text" placeholder="Enter text of new task..."></textarea>
@@ -26,15 +29,19 @@
         </div>
 
         <div class="board">
-            <h3 class="board-title">in progress</h3>
+            <p class="board-title">in progress</p>
+            <div class="listOfTasks">
+                <div class="task" draggable="true">task 1</div>
+                <div class="task" draggable="true">task 2</div>
+                <div class="task" draggable="true">task 3</div>
+            </div>
         </div>
 
         <div class="board">
-            <h3 class="board-title">done</h3>
+            <p class="board-title">done</p>
+            <div class="listOfTasks"></div>
         </div>
-
-    </div>
-
+      
 </body>
 
 </html>

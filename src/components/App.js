@@ -1,93 +1,178 @@
-function addTask() {
-  const tasks = document.querySelectorAll(".tasks");
-  const addBtn = document.querySelector(".add-btn");
-  const addTaskBtn = document.querySelector(".add-task-btn");
-  const cancelTaskBtn = document.querySelector(".cancel-task-btn");
-  const newTaskText = document.querySelector(".new-task-text");
-  const addNewTask = document.querySelector(".add-new-task");
-  let textNewTask;
+class Card {
+  #el;
+  #styles;
 
-  addBtn.addEventListener("click", () => {
-    addNewTask.classList.remove("invisible");
-    addBtn.classList.add("invisible");
-    addTaskBtn.classList.add("invisible");
+  constructor(element) {
+    this.#el = element;
+    this.#styles = window.getComputedStyle(element);
+  }
 
-    newTaskText.addEventListener("input", (e) => {
-      textNewTask = e.target.value;
-      if (textNewTask) {
-        addTaskBtn.classList.remove("invisible");
-      } else {
-        addTaskBtn.classList.add("invisible");
-      }
-    });
-  });
+  clear() {
+    this.#el.remove();
+  }
 
-  cancelTaskBtn.addEventListener("click", () => {
-    newTaskText.value = "";
-    textNewTask = "";
-    addNewTask.classList.add("invisible");
-    addBtn.classList.remove("invisible");
-  });
+  set styles(text) {
+    this.#el.style.cssText = text;
+  }
 
-  addTaskBtn.addEventListener("click", () => {
-    const newTask = document.createElement("div");
-    newTask.classList.add("task");
-    newTask.draggable = true;
-    newTask.textContent = textNewTask;
-    tasks[0].appendChild(newTask);
-    newTaskText.value = "";
-    textNewTask = "";
-    addNewTask.classList.add("invisible");
-    addBtn.classList.remove("invisible");
-    dragAndDrop();
-  });
-}
+  get styles() {
+    return this.#styles;
+  }
 
-addTask();
+  get proection() {
+    return (() => {
+      const d = document.createElement("div");
+      d.classList.add("proection");
+      const { width, height } = this.styles;
+      d.style.cssText = `
+	 			width: ${width};
+		 		height: ${height};
+		 		margin: 10px 0;
+				background-color: white;
+				border-radius: 3px;
+			`;
+      return d;
+    })();
+  }
 
-let draggedItem = undefined;
-function dragAndDrop() {
-  const tasksAll = document.querySelectorAll(".tasks");
-  const taskAll = document.querySelectorAll(".task");
-
-  for (let i = 0; i < taskAll.length; i++) {
-    const item = taskAll[i];
-    item.addEventListener("dragstart", () => {
-      draggedItem = item;
-      setTimeout(() => {
-        item.classList.add("invisible");
-      }, 0);
-    });
-
-    item.addEventListener("dragend", () => {
-      setTimeout(() => {
-        item.classList.remove("invisible");
-        draggedItem = undefined;
-      }, 0);
-    });
-
-    item.addEventListener("dblclick", () => {
-      item.remove();
-    });
-
-    for (let j = 0; j < tasksAll.length; j++) {
-      const items = tasksAll[j];
-      console.log(items);
-      items.addEventListener("dragover", (e) => e.preventDefault());
-      items.addEventListener("dragenter", function (e) {
-        e.preventDefault();
-        this.style.backgroundColor = "rgba(0,0,0, .5)";
-      });
-      items.addEventListener("dragleave", function (e) {
-        e.preventDefault();
-        this.style.backgroundColor = "rgba(0,0,0,0)";
-      });
-      items.addEventListener("drop", function (e) {
-        this.style.backgroundColor = "rgba(0,0,0,0)";
-        this.append(draggedItem);
-      });
-    }
+  get element() {
+    return this.#el;
   }
 }
 
-dragAndDrop();
+class Controller {
+  constructor(container) {
+    this.container = container;
+    this.draggingElement = null;
+    this.draggingProection = null;
+  }
+
+  setDraggingElement(node) {
+    this.draggingElement = new Card(node);
+  }
+
+  replaceDragging() {
+    this.draggingProection.replaceWith(this.draggingElement.element);
+    this.draggingElement.element.style = this.draggingElement.styles;
+  }
+
+  clear() {
+    this.draggingElement = null;
+    this.draggingProection = null;
+  }
+
+  onMouseDown = (evt) => {
+    const target = evt.target;
+
+    if (target.classList.contains("draggable")) {
+      this.shiftX = evt.offsetX;
+      this.shiftY = evt.offsetY;
+      this.setDraggingElement(target);
+      this.draggingElement.style = `
+		 		left: ${evt.pageX - this.shiftX}px;
+		 		top: ${evt.pageY - this.shiftY}px;
+			`;
+      this.proectionAct(evt);
+    }
+  };
+
+  onMouseUp = () => {
+    if (this.draggingElement) {
+      this.replaceDragging();
+      this.clear();
+    }
+  };
+
+  // Рассчёт позиции вставки проекции и вставка или удаление
+  proectionAct(evt) {
+    const target = evt.target;
+    const element = this.draggingElement;
+    const proection = this.draggingProection;
+    if (
+      target.classList.contains("draggable") &&
+      !target.classList.contains("proection")
+    ) {
+      const { y, height } = target.getBoundingClientRect();
+      const appendPosition =
+        y + height / 2 > evt.clientY ? "beforebegin" : "afterend";
+
+      if (!proection) {
+        this.draggingProection = element.proection;
+      } else {
+        proection.remove();
+        target.insertAdjacentElement(appendPosition, proection);
+      }
+    } else {
+      if (target.classList.contains("board")) {
+        const draggableChildren = Array.from(target.children).filter((n) =>
+          n.classList.contains("draggable")
+        );
+        if (draggableChildren.length > 0) {
+          return;
+        }
+        if (!proection) {
+          this.draggingProection = element.proection;
+        } else {
+          proection.remove();
+          target.appendChild(proection);
+        }
+      }
+    }
+  }
+
+  onMouseMove = (evt) => {
+    if (this.draggingElement) {
+      const { pageX, pageY } = evt;
+      const element = this.draggingElement;
+      const { width, height } = this.draggingElement.styles;
+      element.styles = `
+				position: absolute;
+		 		left: ${pageX - this.shiftX}px;
+		 		top: ${pageY - this.shiftY}px;
+		 		pointer-events: none;
+				width: ${width};
+				height: ${height};
+			`;
+      this.proectionAct(evt);
+    }
+  };
+}
+
+const controller = new Controller(document.querySelector(".board"));
+const addNewTaskButton = document.querySelector(".add-btn");
+const addNewTask = document.querySelector(".add-new-task");
+const addTaskButton = document.querySelector(".add-task-btn");
+const cancelTaskButton = document.querySelector(".cancel-task-btn");
+const taskText = document.querySelector(".new-task-text");
+
+document.body.addEventListener("mousedown", controller.onMouseDown);
+document.body.addEventListener("mouseup", controller.onMouseUp);
+document.body.addEventListener("mousemove", controller.onMouseMove);
+
+addNewTaskButton.addEventListener("click", () => {
+  showElement(addNewTask);
+  hideElement(addNewTaskButton);
+  cancelTaskButton.addEventListener("click", () => {
+    hideElement(addNewTask);
+    showElement(addNewTaskButton);
+  });
+  addTaskButton.addEventListener("click", () => {
+    if (taskText.value === "") return;
+    const task = document.createElement("div");
+    task.classList.add("draggable");
+    task.textContent = taskText.value;
+    taskText.value = "";
+    document.querySelector(".task-list").appendChild(task);
+    hideElement(addNewTask);
+    showElement(addNewTaskButton);
+  });
+});
+
+//functions
+function showElement(element) {
+  element.classList.remove("invisible");
+}
+
+function hideElement(element) {
+  element.classList.add("invisible");
+}

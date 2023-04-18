@@ -1,0 +1,103 @@
+html {
+    height: 100%;
+    width: 100%;
+}
+
+.invisible {
+    display: none;
+}
+
+body {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.boards {
+    display: flex;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.board {
+    width: 200px;
+    padding: 0 10px 20px 10px;
+    background-color: #f2eeee;
+    border-radius: 5px;
+    margin: 0 auto;
+    margin-left: 20px;
+}
+
+.draggable {
+    height: 40px;
+    margin: 10px 0;
+    border-radius: 5px;
+    background-color: #e7e4e4;
+    user-select: none;
+    text-align: center;
+    padding-top: 5px;
+}
+
+.draggable:hover {
+    background-color: #e3dcdc;
+}
+
+.draggable:active {
+    background-color: #f5d8d8;
+}
+
+.board-title {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.add-new-task {
+    border-radius: 5px;
+    margin-top: auto;
+}
+
+.new-task-text {
+    resize: none;
+    width: 90%;
+    font-size: 12px;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: rgb(245, 245, 248);
+    min-height: 60px;
+}
+
+.new-task-text:focus {
+    outline: none;
+}
+
+.new-task-buttons {
+    display: flex;
+    justify-content: center;
+}
+
+.btn {
+    border-radius: 3px;
+    height: 25px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    align-items: center;
+}
+
+.add-task-btn {
+    background-color: rgb(204, 242, 204);
+    margin-right: 5px;
+}
+
+.cancel-task-btn {
+    background-color: rgb(236, 198, 198);
+}
+
+.add-btn {
+    margin-top: 10px;
+    background-color: gray;
+    color: white;
+}
