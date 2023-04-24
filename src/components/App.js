@@ -114,7 +114,8 @@ class Controller {
           this.draggingProection = element.proection;
         } else {
           proection.remove();
-          target.appendChild(proection);
+          //const currentAddNewTaskButton = target.querySelector(".add-btn");
+          target.insertBefore(proection, target.querySelector(".add-btn"));
         }
       }
     }
@@ -139,36 +140,39 @@ class Controller {
 }
 
 const controller = new Controller(document.querySelector(".board"));
-const addNewTaskButton = document.querySelector(".add-btn");
-const addNewTask = document.querySelector(".add-new-task");
-const addTaskButton = document.querySelector(".add-task-btn");
-const cancelTaskButton = document.querySelector(".cancel-task-btn");
-const taskText = document.querySelector(".new-task-text");
+const addNewTaskButtons = document.querySelectorAll(".add-btn");
 
 document.body.addEventListener("mousedown", controller.onMouseDown);
 document.body.addEventListener("mouseup", controller.onMouseUp);
 document.body.addEventListener("mousemove", controller.onMouseMove);
 
-addNewTaskButton.addEventListener("click", () => {
-  showElement(addNewTask);
-  hideElement(addNewTaskButton);
-  cancelTaskButton.addEventListener("click", () => {
-    hideElement(addNewTask);
-    showElement(addNewTaskButton);
-  });
-  addTaskButton.addEventListener("click", () => {
-    if (taskText.value === "") return;
-    const task = document.createElement("div");
-    task.classList.add("draggable");
-    task.textContent = taskText.value;
-    taskText.value = "";
-    document.querySelector(".task-list").appendChild(task);
-    hideElement(addNewTask);
-    showElement(addNewTaskButton);
+[...addNewTaskButtons].forEach((addBtn) => {
+  addBtn.addEventListener("click", () => {
+    const currentBoard = addBtn.parentElement;
+    const addNewTask = currentBoard.querySelector(".add-new-task");
+    const addTaskButton = currentBoard.querySelector(".add-task-btn");
+    const cancelTaskButton = currentBoard.querySelector(".cancel-task-btn");
+    const taskText = currentBoard.querySelector(".new-task-text");
+
+    showElement(addNewTask);
+    hideElement(addBtn);
+    cancelTaskButton.addEventListener("click", () => {
+      hideElement(addNewTask);
+      showElement(addBtn);
+    });
+    addTaskButton.addEventListener("click", () => {
+      if (taskText.value === "") return;
+      const task = document.createElement("div");
+      task.classList.add("draggable");
+      task.textContent = taskText.value;
+      taskText.value = "";
+      currentBoard.querySelector(".task-list").appendChild(task);
+      hideElement(addNewTask);
+      showElement(addBtn);
+    });
   });
 });
 
-//functions
 function showElement(element) {
   element.classList.remove("invisible");
 }
